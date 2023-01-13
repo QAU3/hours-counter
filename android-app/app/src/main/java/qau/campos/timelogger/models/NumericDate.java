@@ -1,4 +1,4 @@
-package qau.campos.timelogger.utils;
+package qau.campos.timelogger.models;
 
 public class NumericDate {
     private int year;
@@ -34,4 +34,10 @@ public class NumericDate {
     public void setDay(int day) {
         this.day = day;
     }
+
+    @Override
+    public String toString(){
+        return getDay() + "." + getMonth()+1 + "." + getYear();
+    }
+
 }

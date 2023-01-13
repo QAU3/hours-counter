@@ -1,21 +1,17 @@
 package qau.campos.timelogger.models;
 
-import java.util.Date;
-
-import qau.campos.timelogger.utils.NumericDate;
-
 /**
  * Model used to serialize lodged time.
  */
 public class Minutes {
     private int minutes;
     private String username;
-    private NumericDate date;
+    private String date;
 
     /**
      * Creates a new instance of Minutes model.
      */
-    public Minutes(String username, NumericDate date, int minutes ) {
+    public Minutes(String username, String date, int minutes ) {
         this.minutes = minutes;
         this.username = username;
         this.date = date;
@@ -38,11 +34,11 @@ public class Minutes {
         this.username = username;
     }
 
-    public NumericDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    private void setDate(NumericDate date) {
+    private void setDate(String date) {
         this.date = date;
     }
 }

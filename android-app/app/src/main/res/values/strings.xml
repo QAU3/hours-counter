@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Time Logger</string>
+    <string name="host">http://192.168.64.112:3000</string>
+    <string name="api_logger">/api/logger</string>
 </resources>

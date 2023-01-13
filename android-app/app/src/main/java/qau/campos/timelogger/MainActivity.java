@@ -18,15 +18,12 @@ public class MainActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.loginButton);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               try {
-                   Intent intent = new Intent(view.getContext(), LoggerView.class);
-                   startActivity(intent);
-               }catch(Exception ex){
-                   Log.e("main", ex.toString());
-                }
+        loginButton.setOnClickListener(view -> {
+           try {
+               Intent intent = new Intent(MainActivity.this, LoggerView.class);
+               startActivity(intent);
+           }catch(Exception ex){
+               Log.e("main", ex.toString());
             }
         });
     }

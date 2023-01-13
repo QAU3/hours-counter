@@ -15,13 +15,14 @@ logger.get('/', async(req, res, next) => {
 });
 
 logger.post('/', async(req, res, next) => {
-    let {username, minutes} = req.body;
+    let {username, minutes, date} = req.body;
     try{
-        let query = await minutesController.addMinutes({username, minutes});
-        res.json(query)
+        let timestamp = new Date(date);
+        await minutesController.addMinutes({username, minutes, date:timestamp});
+        res.json({response: "Minutes added"})
     }catch(err){
         console.log(err.message)
-        res.status(500).json({message: err.message})
+        res.json({response: err.message})
     }
 });
 
