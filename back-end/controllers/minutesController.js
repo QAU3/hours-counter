@@ -16,10 +16,12 @@ const getTotalMinutes = (username)  => {
         {$unwind: '$week'},
         {$match: {'year._id': {$eq:CURRENT_YEAR}}},
         {$match: {'month._id': {$eq:CURRENT_MONTH+1}}},
-        {$match: {'week._id': {$eq:CURRENT_WEEK}}},
-
+        {$match: {'week._id': {$eq:CURRENT_WEEK}}}
     ]
+
+
     let json = Minutes.aggregate(workingTime)
+    console.log(json)
     return json
 }
 
