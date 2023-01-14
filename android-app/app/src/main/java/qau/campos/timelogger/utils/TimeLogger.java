@@ -5,15 +5,15 @@ import android.os.Handler;
 
 import qau.campos.timelogger.LoggerView;
 
-public class TimeLooger implements  Runnable  {
+public class TimeLogger implements  Runnable  {
     Context context;
     long startTime;
-    Handler timerHandler;
+    private Handler timerHandler;
 
-    public TimeLooger(Context context){
+    public TimeLogger(Context context){
         this.context = context;
         this.startTime = System.currentTimeMillis();
-        this.timerHandler = new Handler();
+        this.setTimerHandler(new Handler());
     }
 
 
@@ -27,6 +27,21 @@ public class TimeLooger implements  Runnable  {
         LoggerView loggerView = (LoggerView) context;
         loggerView.onTick(minutes / 60, minutes % 60);
 
-        timerHandler.postDelayed(this, 500);
+        getTimerHandler().postDelayed(this, 500);
+    }
+
+    public Handler getTimerHandler() {
+        return timerHandler;
+    }
+
+    private void setTimerHandler(Handler timerHandler) {
+        this.timerHandler = timerHandler;
+    }
+
+    public void startTimer (){
+        getTimerHandler().postDelayed(this, 0);
+    }
+    public void pauseTimer(){
+        getTimerHandler().removeCallbacks(this);
     }
 }

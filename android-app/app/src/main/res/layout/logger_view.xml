@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Years" />
+                    android:text="Years (h)" />
             </LinearLayout>
 
             <LinearLayout
@@ -67,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Month" />
+                    android:text="Month (h)" />
             </LinearLayout>
 
             <LinearLayout
@@ -93,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Week" />
+                    android:text="Week (h)" />
             </LinearLayout>
 
             <LinearLayout
@@ -183,9 +183,16 @@
         </GridLayout>
 
         <Button
+            android:id="@+id/timerBUtton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="enterManualTime"
+            android:text="Manual Time" />
+
+        <Button
             android:id="@+id/addTimeButton"
             android:layout_width="match_parent"
-            android:layout_height="118dp"
+            android:layout_height="95dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:onClick="addTime"
