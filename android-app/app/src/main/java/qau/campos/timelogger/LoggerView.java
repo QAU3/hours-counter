@@ -2,6 +2,7 @@ package qau.campos.timelogger;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -32,7 +33,7 @@ public class LoggerView extends AppCompatActivity {
     TextView[] timeViews;
     TextView[] timeHeadersViews;
     TimeLogger timeLogger;
-
+    String username;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +50,12 @@ public class LoggerView extends AppCompatActivity {
         timeViews = new TextView[] {findViewById(R.id.minutesYear), findViewById(R.id.minutesMonth), findViewById(R.id.minutesWeek)};
         timeHeadersViews = new TextView[] {findViewById(R.id.yearHeader), findViewById(R.id.monthHeader), findViewById(R.id.weekHeader)};
 
-        Utils.getData(this, URL);
         timeLogger = new TimeLogger(this);
         timeLogger.startTimer();
+
+        username =  getIntent().getStringExtra("email");
+        Utils.getData(this, URL + "/" +username);
+
     }
 
     @Override
@@ -89,7 +93,7 @@ public class LoggerView extends AppCompatActivity {
     }
 
     public void onPostedData(){
-        Utils.getData(this, URL);
+        Utils.getData(this, URL + "/" +username);
     }
 
     public void onTick(int hours, int minutes){
@@ -103,8 +107,7 @@ public class LoggerView extends AppCompatActivity {
 
     public void addTime(View v){
         int totalTimeInMinutes = (hours * 60) + minutes;
-
-        Minutes loggedTime = new Minutes("cuauhtli",
+        Minutes loggedTime = new Minutes(username,
                 DateFormatHelper.getTimeStampFromNumericDate(selectedDate),
                 totalTimeInMinutes);
         Utils.postData(this, URL, loggedTime);

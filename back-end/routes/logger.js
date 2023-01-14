@@ -1,11 +1,11 @@
-const { json } = require('express');
 const express = require('express');
 const logger = express.Router();
 const minutesController = require('../controllers/minutesController');
 
-logger.get('/', async(req, res, next) => {
+logger.get('/:username', async(req, res, next) => {
+    console.log(req.params.username)
     try{
-        let minutes = await minutesController.getTotalMinutes("cuauhtli");
+        let minutes = await minutesController.getTotalMinutes(req.params.username);
         res.json(minutes)
     }
     catch(err){
