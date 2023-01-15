@@ -1,8 +1,6 @@
 package qau.campos.timelogger;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -13,15 +11,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import qau.campos.timelogger.interfaces.IResponseHandler;
 import qau.campos.timelogger.models.AggregatedTime;
 import qau.campos.timelogger.models.Minutes;
 import qau.campos.timelogger.models.NumericDate;
 import qau.campos.timelogger.utils.DateFormatHelper;
 import qau.campos.timelogger.utils.NumberPickerType;
 import qau.campos.timelogger.utils.TimeLogger;
-import qau.campos.timelogger.utils.Utils;
+import qau.campos.timelogger.utils.ServerRequest;
 
-public class LoggerView extends AppCompatActivity {
+public class LoggerView extends AppCompatActivity implements IResponseHandler {
 
     NumericDate selectedDate = DateFormatHelper.getNumericDate();
     NumberPicker hoursPicker;
@@ -31,9 +30,9 @@ public class LoggerView extends AppCompatActivity {
     int hours=0;
     int minutes=0;
     TextView[] timeViews;
-    TextView[] timeHeadersViews;
     TimeLogger timeLogger;
     String username;
+    ServerRequest serverRequest;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,13 +47,14 @@ public class LoggerView extends AppCompatActivity {
         URL = getString(R.string.host) + getString(R.string.api_logger);
 
         timeViews = new TextView[] {findViewById(R.id.minutesYear), findViewById(R.id.minutesMonth), findViewById(R.id.minutesWeek)};
-        timeHeadersViews = new TextView[] {findViewById(R.id.yearHeader), findViewById(R.id.monthHeader), findViewById(R.id.weekHeader)};
 
         timeLogger = new TimeLogger(this);
         timeLogger.startTimer();
 
         username =  getIntent().getStringExtra("email");
-        Utils.getData(this, URL + "/" +username);
+
+        serverRequest = new ServerRequest(this);
+        serverRequest.getData(URL + "/" +username);
 
     }
 
@@ -93,7 +93,7 @@ public class LoggerView extends AppCompatActivity {
     }
 
     public void onPostedData(){
-        Utils.getData(this, URL + "/" +username);
+        serverRequest.getData(URL + "/" +username);
     }
 
     public void onTick(int hours, int minutes){
@@ -110,7 +110,7 @@ public class LoggerView extends AppCompatActivity {
         Minutes loggedTime = new Minutes(username,
                 DateFormatHelper.getTimeStampFromNumericDate(selectedDate),
                 totalTimeInMinutes);
-        Utils.postData(this, URL, loggedTime);
+        serverRequest.postData(URL, loggedTime);
     }
 
     private NumberPicker initPicker(NumberPickerType type, int pickerId, int min, int max){
