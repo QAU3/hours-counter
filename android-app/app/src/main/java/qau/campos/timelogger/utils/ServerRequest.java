@@ -20,15 +20,13 @@ import qau.campos.timelogger.models.Minutes;
 
 public class ServerRequest {
     Context context;
-
+    RequestQueue volleyQueue;
     public ServerRequest(Context context){
         this.context = context;
-//        volleyQueue = Volley.newRequestQueue(context);
+        volleyQueue = Volley.newRequestQueue(context);
     }
 
     public void getData(String url){
-        RequestQueue volleyQueue = Volley.newRequestQueue(context);
-
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 res -> {
                     try {
@@ -50,8 +48,10 @@ public class ServerRequest {
                                 w.getInt("minutes"));
 
                         AggregatedTime[] responses =  new AggregatedTime[]{year,month,week};
+
                         IResponseHandler loggerView = (IResponseHandler) context;
                         loggerView.onGetResponse(responses);
+                        
                         Log.d("volley", year.getMinutes()+"");
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -64,8 +64,6 @@ public class ServerRequest {
     }
 
     public void postData(String url, Minutes minutes){
-        RequestQueue volleyQueue = Volley.newRequestQueue(context);
-
         JSONObject postData = new JSONObject();
         try{
             postData.put("username", minutes.getUsername());

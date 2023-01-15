@@ -1,6 +1,9 @@
 package qau.campos.timelogger;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -8,10 +11,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import qau.campos.timelogger.interfaces.IResponseHandler;
+import qau.campos.timelogger.interfaces.ITimerHandler;
 import qau.campos.timelogger.models.AggregatedTime;
 import qau.campos.timelogger.models.Minutes;
 import qau.campos.timelogger.models.NumericDate;
@@ -19,8 +24,9 @@ import qau.campos.timelogger.utils.DateFormatHelper;
 import qau.campos.timelogger.utils.NumberPickerType;
 import qau.campos.timelogger.utils.TimeLogger;
 import qau.campos.timelogger.utils.ServerRequest;
+import qau.campos.timelogger.utils.Utils;
 
-public class LoggerView extends AppCompatActivity implements IResponseHandler {
+public class LoggerView extends AppCompatActivity implements IResponseHandler, ITimerHandler {
 
     NumericDate selectedDate = DateFormatHelper.getNumericDate();
     NumberPicker hoursPicker;
@@ -33,10 +39,12 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler {
     TimeLogger timeLogger;
     String username;
     ServerRequest serverRequest;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.logger_view);
+        ActionBar actionBar = getSupportActionBar();
 
         hoursPicker = initPicker(NumberPickerType.HOURS,R.id.hoursPicker, 0,24);
         minutesPicker= initPicker(NumberPickerType.MINUTES,R.id.minutesPicker, 0,59);
@@ -55,7 +63,26 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler {
 
         serverRequest = new ServerRequest(this);
         serverRequest.getData(URL + "/" +username);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( @NonNull MenuItem item ) {
+        switch (item.getItemId()){
+            case R.id.logoutButton:
+
+                break;
+            case R.id.modifyEntries:
+                Utils.showMessage(this,"pressed");
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -81,10 +108,7 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler {
        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void onDataSet (@NonNull NumericDate date){
-        selectedDate = date;
-        dateButton.setText(date.toString());
-    }
+
 
     public void  onGetResponse(AggregatedTime[] responses){
         for (int i =0; i < responses.length; i++){
@@ -111,6 +135,11 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler {
                 DateFormatHelper.getTimeStampFromNumericDate(selectedDate),
                 totalTimeInMinutes);
         serverRequest.postData(URL, loggedTime);
+    }
+
+    public void onDataSet (@NonNull NumericDate date){
+        selectedDate = date;
+        dateButton.setText(date.toString());
     }
 
     private NumberPicker initPicker(NumberPickerType type, int pickerId, int min, int max){

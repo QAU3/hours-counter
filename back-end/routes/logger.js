@@ -14,6 +14,7 @@ logger.get('/:username', async(req, res, next) => {
     }
 });
 
+
 logger.post('/', async(req, res, next) => {
     let {username, minutes, date} = req.body;
     try{
