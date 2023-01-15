@@ -1,4 +1,4 @@
-package qau.campos.timelogger;
+package qau.campos.timelogger.views;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment;
 
 import qau.campos.timelogger.utils.DateFormatHelper;
 import qau.campos.timelogger.models.NumericDate;
+import qau.campos.timelogger.views.LoggerView;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     @Override

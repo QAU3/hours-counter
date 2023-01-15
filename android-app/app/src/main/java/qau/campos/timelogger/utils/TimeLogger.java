@@ -3,7 +3,7 @@ package qau.campos.timelogger.utils;
 import android.content.Context;
 import android.os.Handler;
 
-import qau.campos.timelogger.LoggerView;
+import qau.campos.timelogger.interfaces.ITimerHandler;
 
 public class TimeLogger implements  Runnable  {
     Context context;
@@ -16,7 +16,6 @@ public class TimeLogger implements  Runnable  {
         this.setTimerHandler(new Handler());
     }
 
-
     @Override
     public void run() {
         long millis = System.currentTimeMillis() - startTime;
@@ -24,7 +23,7 @@ public class TimeLogger implements  Runnable  {
         int minutes = seconds / 60;
         seconds = seconds % 60;
 
-        LoggerView loggerView = (LoggerView) context;
+        ITimerHandler loggerView = (ITimerHandler) context;
         loggerView.onTick(minutes / 60, minutes % 60);
 
         getTimerHandler().postDelayed(this, 500);
@@ -41,6 +40,7 @@ public class TimeLogger implements  Runnable  {
     public void startTimer (){
         getTimerHandler().postDelayed(this, 0);
     }
+
     public void pauseTimer(){
         getTimerHandler().removeCallbacks(this);
     }

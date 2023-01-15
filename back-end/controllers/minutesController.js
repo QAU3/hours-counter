@@ -1,8 +1,9 @@
 const Minutes = require('../models/Minute');
 const { CURRENT_YEAR, CURRENT_MONTH, CURRENT_WEEK } = require('../utils/utils');
 
-const getTotalMinutes = (username)  => {
-    let workingTime =[
+const getAggregatedMinutes = (username)  => {
+    // TODO: Fix not existing week
+    const WEEK_AGGREGATION =[
         {$match: {username}},
         {$facet: 
             {
@@ -18,11 +19,12 @@ const getTotalMinutes = (username)  => {
         {$match: {'month._id': {$eq:CURRENT_MONTH+1}}},
         {$match: {'week._id': {$eq:CURRENT_WEEK}}}
     ]
+    
+    return  Minutes.aggregate(WEEK_AGGREGATION)
+}
 
-
-    let json = Minutes.aggregate(workingTime)
-    console.log(json)
-    return json
+const getAllUserMinutes = (username) => {
+    return Minutes.find({username}).exec()
 }
 
 const addMinutes = (entry) => {
@@ -30,4 +32,5 @@ const addMinutes = (entry) => {
     return Minutes.create(entry)
 }
 
-module.exports = { getTotalMinutes, addMinutes }
+
+module.exports = { getAggregatedMinutes, getAllUserMinutes, addMinutes }

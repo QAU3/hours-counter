@@ -1,8 +1,9 @@
-package qau.campos.timelogger;
+package qau.campos.timelogger.views;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -10,18 +11,24 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
+import qau.campos.timelogger.R;
+import qau.campos.timelogger.interfaces.IResponseHandler;
+import qau.campos.timelogger.interfaces.ITimerHandler;
 import qau.campos.timelogger.models.AggregatedTime;
 import qau.campos.timelogger.models.Minutes;
 import qau.campos.timelogger.models.NumericDate;
 import qau.campos.timelogger.utils.DateFormatHelper;
 import qau.campos.timelogger.utils.NumberPickerType;
 import qau.campos.timelogger.utils.TimeLogger;
-import qau.campos.timelogger.utils.Utils;
+import qau.campos.timelogger.utils.ServerRequest;
 
-public class LoggerView extends AppCompatActivity {
+public class LoggerView extends AppCompatActivity implements IResponseHandler, ITimerHandler {
 
     NumericDate selectedDate = DateFormatHelper.getNumericDate();
     NumberPicker hoursPicker;
@@ -31,13 +38,15 @@ public class LoggerView extends AppCompatActivity {
     int hours=0;
     int minutes=0;
     TextView[] timeViews;
-    TextView[] timeHeadersViews;
     TimeLogger timeLogger;
     String username;
+    ServerRequest serverRequest;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.logger_view);
+        ActionBar actionBar = getSupportActionBar();
 
         hoursPicker = initPicker(NumberPickerType.HOURS,R.id.hoursPicker, 0,24);
         minutesPicker= initPicker(NumberPickerType.MINUTES,R.id.minutesPicker, 0,59);
@@ -48,14 +57,14 @@ public class LoggerView extends AppCompatActivity {
         URL = getString(R.string.host) + getString(R.string.api_logger);
 
         timeViews = new TextView[] {findViewById(R.id.minutesYear), findViewById(R.id.minutesMonth), findViewById(R.id.minutesWeek)};
-        timeHeadersViews = new TextView[] {findViewById(R.id.yearHeader), findViewById(R.id.monthHeader), findViewById(R.id.weekHeader)};
 
         timeLogger = new TimeLogger(this);
         timeLogger.startTimer();
 
         username =  getIntent().getStringExtra("email");
-        Utils.getData(this, URL + "/" +username);
 
+        serverRequest = new ServerRequest(this);
+        serverRequest.getAggregatedData(URL + "/" +username);
     }
 
     @Override
@@ -76,24 +85,46 @@ public class LoggerView extends AppCompatActivity {
         timeLogger.pauseTimer();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( @NonNull MenuItem item ) {
+        switch (item.getItemId()){
+            case R.id.logoutButton:
+
+                break;
+            case R.id.modifyEntries:
+                Intent intent = new Intent(LoggerView.this, SingleEntryView.class);
+                intent.putExtra("email", username);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     public void showDatePickerDialog(View v) {
        DialogFragment newFragment = new DatePickerFragment();
        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void onDataSet (@NonNull NumericDate date){
-        selectedDate = date;
-        dateButton.setText(date.toString());
-    }
-
-    public void  onGetResponse(AggregatedTime[] responses){
+    public void onGetAggregatedTimeResponse(AggregatedTime[] responses){
         for (int i =0; i < responses.length; i++){
             timeViews[i].setText(responses[i].getMinutes()/60+"");
         }
     }
 
+    @Override
+    public void onGetAllUserMinutesResponse(ArrayList<Minutes> arrayList) {
+
+    }
+
     public void onPostedData(){
-        Utils.getData(this, URL + "/" +username);
+        serverRequest.getAggregatedData(URL + "/" +username);
     }
 
     public void onTick(int hours, int minutes){
@@ -110,7 +141,12 @@ public class LoggerView extends AppCompatActivity {
         Minutes loggedTime = new Minutes(username,
                 DateFormatHelper.getTimeStampFromNumericDate(selectedDate),
                 totalTimeInMinutes);
-        Utils.postData(this, URL, loggedTime);
+        serverRequest.postData(URL, loggedTime);
+    }
+
+    public void onDataSet (@NonNull NumericDate date){
+        selectedDate = date;
+        dateButton.setText(date.toString());
     }
 
     private NumberPicker initPicker(NumberPickerType type, int pickerId, int min, int max){
