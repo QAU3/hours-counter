@@ -1,8 +1,8 @@
-package qau.campos.timelogger;
+package qau.campos.timelogger.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +15,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
+import qau.campos.timelogger.R;
 import qau.campos.timelogger.interfaces.IResponseHandler;
 import qau.campos.timelogger.interfaces.ITimerHandler;
 import qau.campos.timelogger.models.AggregatedTime;
@@ -24,7 +27,6 @@ import qau.campos.timelogger.utils.DateFormatHelper;
 import qau.campos.timelogger.utils.NumberPickerType;
 import qau.campos.timelogger.utils.TimeLogger;
 import qau.campos.timelogger.utils.ServerRequest;
-import qau.campos.timelogger.utils.Utils;
 
 public class LoggerView extends AppCompatActivity implements IResponseHandler, ITimerHandler {
 
@@ -62,27 +64,7 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler, I
         username =  getIntent().getStringExtra("email");
 
         serverRequest = new ServerRequest(this);
-        serverRequest.getData(URL + "/" +username);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected( @NonNull MenuItem item ) {
-        switch (item.getItemId()){
-            case R.id.logoutButton:
-
-                break;
-            case R.id.modifyEntries:
-                Utils.showMessage(this,"pressed");
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+        serverRequest.getAggregatedData(URL + "/" +username);
     }
 
     @Override
@@ -103,21 +85,46 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler, I
         timeLogger.pauseTimer();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( @NonNull MenuItem item ) {
+        switch (item.getItemId()){
+            case R.id.logoutButton:
+
+                break;
+            case R.id.modifyEntries:
+                Intent intent = new Intent(LoggerView.this, SingleEntryView.class);
+                intent.putExtra("email", username);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     public void showDatePickerDialog(View v) {
        DialogFragment newFragment = new DatePickerFragment();
        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-
-
-    public void  onGetResponse(AggregatedTime[] responses){
+    public void onGetAggregatedTimeResponse(AggregatedTime[] responses){
         for (int i =0; i < responses.length; i++){
             timeViews[i].setText(responses[i].getMinutes()/60+"");
         }
     }
 
+    @Override
+    public void onGetAllUserMinutesResponse(ArrayList<Minutes> arrayList) {
+
+    }
+
     public void onPostedData(){
-        serverRequest.getData(URL + "/" +username);
+        serverRequest.getAggregatedData(URL + "/" +username);
     }
 
     public void onTick(int hours, int minutes){

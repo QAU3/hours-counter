@@ -26,7 +26,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".LoggerView" android:label ="LoggerView"></activity>
+        <activity android:name=".views.LoggerView" android:label ="LoggerView"></activity>
+        <activity android:name=".views.SingleEntryView" android:label="SingleEntryView"></activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 

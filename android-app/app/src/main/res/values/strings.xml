@@ -2,4 +2,7 @@
     <string name="app_name">Time Logger</string>
     <string name="host">http://88.200.63.148:5990</string>
     <string name="api_logger">/api/logger</string>
+    <string name="logout">Logout</string>
+    <string name="modify_entries">Modify entries</string>
+    <string name="no_fectched_data">No fetched data</string>
 </resources>

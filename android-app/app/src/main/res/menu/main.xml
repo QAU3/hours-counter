@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- action button for search -->
+    <item android:title="@string/modify_entries"
+        android:id="@+id/modifyEntries"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:icon="@drawable/date_range"/>
+
+    <!-- action button for refresh -->
+    <item android:title="@string/logout"
+        android:id="@+id/logoutButton"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:icon="@drawable/logout"/>
 </menu>

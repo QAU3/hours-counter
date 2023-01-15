@@ -13,7 +13,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import qau.campos.timelogger.LoggerView;
+import java.util.ArrayList;
+
 import qau.campos.timelogger.interfaces.IResponseHandler;
 import qau.campos.timelogger.models.AggregatedTime;
 import qau.campos.timelogger.models.Minutes;
@@ -21,12 +22,43 @@ import qau.campos.timelogger.models.Minutes;
 public class ServerRequest {
     Context context;
     RequestQueue volleyQueue;
+
+
+
     public ServerRequest(Context context){
         this.context = context;
         volleyQueue = Volley.newRequestQueue(context);
     }
 
-    public void getData(String url){
+    public void getAllUserMinutes(String url){
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                res -> {
+                    try {
+                        ArrayList<Minutes> minutesArrayList = new ArrayList<>();
+                        for (int i = 0; i < res.length(); i++){
+                            JSONObject minutesObject = res.getJSONObject(i);
+                            Minutes minutes = new Minutes(
+                                    minutesObject.getString("_id"),
+                                    minutesObject.getString("username"),
+                                    minutesObject.getString("date"),
+                                    minutesObject.getInt("minutes"));
+                            minutesArrayList.add(minutes);
+                        }
+
+                        IResponseHandler loggerView = (IResponseHandler) context;
+                        loggerView.onGetAllUserMinutesResponse(minutesArrayList);
+                        Log.d("volley","parsing error?");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context,
+                                "Error: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }, error -> Log.e("VOLLEY ERROR", error.toString()));
+        volleyQueue.add(jsonObjectRequest);
+    }
+
+    public void getAggregatedData(String url){
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 res -> {
                     try {
@@ -50,8 +82,8 @@ public class ServerRequest {
                         AggregatedTime[] responses =  new AggregatedTime[]{year,month,week};
 
                         IResponseHandler loggerView = (IResponseHandler) context;
-                        loggerView.onGetResponse(responses);
-                        
+                        loggerView.onGetAggregatedTimeResponse(responses);
+
                         Log.d("volley", year.getMinutes()+"");
                     } catch (JSONException e) {
                         e.printStackTrace();
