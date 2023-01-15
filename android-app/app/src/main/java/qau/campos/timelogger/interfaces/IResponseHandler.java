@@ -9,4 +9,5 @@ public interface IResponseHandler {
      void onGetAggregatedTimeResponse(AggregatedTime[] responses);
      void onGetAllUserMinutesResponse(ArrayList<Minutes> response);
      void onPostedData();
+     void onDeletedData();
 }

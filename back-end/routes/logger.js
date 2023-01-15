@@ -34,7 +34,31 @@ logger.post('/', async(req, res, next) => {
         res.json({response: "Minutes added"})
     }catch(err){
         console.log(err.message)
-        res.json({response: err.message})
+        res.status(500).json({message: err.message})
+    }
+});
+
+
+
+logger.delete('/:id', async(req, res, next) => {
+    try{
+        await minutesController.deleteMinutes(req.params.id);
+        res.json({response: "Minutes deleted"})
+    }catch(err){
+        console.log(err.message)
+        res.status(500).json({message: err.message})
+    }
+});
+
+logger.put('/', async(req, res, next) => {
+    let {username, minutes, date} = req.body;
+    try{
+        let timestamp = new Date(date);
+        await minutesController.updateMinutes({username, minutes, date:timestamp});
+        res.json({response: "Minutes updated"})
+    }catch(err){
+        console.log(err.message)
+        res.status(500).json({message: err.message})
     }
 });
 

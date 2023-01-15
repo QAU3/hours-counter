@@ -127,6 +127,11 @@ public class LoggerView extends AppCompatActivity implements IResponseHandler, I
         serverRequest.getAggregatedData(URL + "/" +username);
     }
 
+    @Override
+    public void onDeletedData() {
+
+    }
+
     public void onTick(int hours, int minutes){
         hoursPicker.setValue(hours);
         minutesPicker.setValue(minutes);

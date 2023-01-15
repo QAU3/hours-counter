@@ -32,5 +32,12 @@ const addMinutes = (entry) => {
     return Minutes.create(entry)
 }
 
+const deleteMinutes = (id) => { 
+    return Minutes.findByIdAndDelete(id).exec()
+}       
 
-module.exports = { getAggregatedMinutes, getAllUserMinutes, addMinutes }
+const updateMinutes = (entry) => {
+    return Minutes.findOneAndUpdate
+}        
+
+module.exports = { getAggregatedMinutes, getAllUserMinutes, addMinutes, deleteMinutes }

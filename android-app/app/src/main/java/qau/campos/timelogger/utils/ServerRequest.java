@@ -30,6 +30,7 @@ public class ServerRequest {
         volleyQueue = Volley.newRequestQueue(context);
     }
 
+
     public void getAllUserMinutes(String url){
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 res -> {
@@ -121,4 +122,24 @@ public class ServerRequest {
 
         volleyQueue.add(jsonObjectRequest);
     }
+
+    public void deleteData(String url){
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                res -> {
+                    try {
+                        Utils.showMessage(context,"Response:" + res.getString("response"));
+                        IResponseHandler v = (IResponseHandler) context;
+                        v.onDeletedData();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Utils.showMessage(context, "Error: " + e.getMessage());
+                    }
+                }, error -> Utils.showMessage(context, "Volley error: " + error.getMessage()));
+
+        volleyQueue.add(jsonObjectRequest);
+    }
+
 }
