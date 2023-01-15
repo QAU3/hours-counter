@@ -5,7 +5,7 @@ const minutesController = require('../controllers/minutesController');
 logger.get('/:username', async(req, res, next) => {
     console.log(req.params.username)
     try{
-        let minutes = await minutesController.getTotalMinutes(req.params.username);
+        let minutes = await minutesController.getAggregatedMinutes(req.params.username);
         res.json(minutes)
     }
     catch(err){
@@ -14,6 +14,17 @@ logger.get('/:username', async(req, res, next) => {
     }
 });
 
+logger.get('/all/:username', async(req, res, next) => {
+    try{
+        let minutes = await minutesController.getAllUserMinutes(req.params.username);
+        res.json(minutes)
+        console.log(minutes)
+    }
+    catch(err){
+        console.log(err.message)
+        res.status(500).json({message: err.message})
+    }
+});
 
 logger.post('/', async(req, res, next) => {
     let {username, minutes, date} = req.body;
